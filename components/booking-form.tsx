@@ -1,5 +1,5 @@
 'use client'
- 
+
 import type React from 'react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -12,13 +12,11 @@ const labelClass = 'mb-2 block text-sm font-medium text-foreground'
 
 export function BookingForm() {
   const [submitted, setSubmitted] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setIsSubmitting(true)
-    setErrorMessage('')
+    setLoading(true)
 
     const formData = new FormData(e.currentTarget)
     formData.append('access_key', '4267081b-0bc4-4e0c-89fb-1d7ccf6aa662')
@@ -30,16 +28,15 @@ export function BookingForm() {
       })
 
       const data = await response.json()
-
       if (data.success) {
         setSubmitted(true)
       } else {
-        setErrorMessage(data.message || 'Something went wrong. Please try again.')
+        alert('There was an issue sending your message. Please try again.')
       }
-    } catch {
-      setErrorMessage('Unable to send inquiry. Please check your connection and try again.')
+    } catch (err) {
+      alert('There was an issue sending your message. Please try again.')
     } finally {
-      setIsSubmitting(false)
+      setLoading(false)
     }
   }
 
@@ -147,17 +144,13 @@ export function BookingForm() {
                 />
               </div>
 
-              {errorMessage && (
-                <p className="text-sm text-red-500 text-center">{errorMessage}</p>
-              )}
-
               <Button
                 type="submit"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={loading}
                 className="mt-2 h-12 rounded-full text-base"
               >
-                {isSubmitting ? 'Sending...' : 'Check Date & Request Consultation'}
+                {loading ? 'Sending...' : 'Check Date & Request Consultation'}
               </Button>
             </form>
           )}
